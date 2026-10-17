@@ -1,7 +1,9 @@
 import pandas as pd
+from config import RAW_DATA, CLEAN_DATA
+
 
 # Step 1: Load the dataset from the data folder.
-df = pd.read_csv(r"C:\Users\Gener\Documents\Intro_to_AI_portfolio\Data\Raw\BCIT601_starter_service_requests_dataset.csv")
+df = pd.read_csv(RAW_DATA)
 
 # Step 2: clean columns (fill blanks, lower case and remove whitespace and delete duplicates)
 
@@ -32,5 +34,5 @@ df = df.drop_duplicates()
 print(df.isnull().sum())
 
 
-df.to_csv(r"C:\Users\Gener\Documents\Intro_to_AI_portfolio\Data\ProcessedBCIT601_starter_service_requests_dataset_clean.csv", index=False)
+df.to_csv(CLEAN_DATA, index=False)
 print("Saved cleaned file.")
