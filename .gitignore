@@ -1,0 +1,45 @@
+ Logs and databases
+*.log
+*.sqlite
+
+# Environment variables and secrets 
+.env
+.env.local
+.env.*.local
+
+# Dependency directories
+node_modules/
+jspm_packages/
+web_modules/
+
+# Build and distribution outputs
+dist/
+build/
+out/
+*.exe
+*.dll
+*.so
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+
+# IDEs and Text Editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# OS files
+.DS_Store
+Thumbs.db

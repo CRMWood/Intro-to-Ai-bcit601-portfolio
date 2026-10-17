@@ -1,0 +1,81 @@
+request_id,request_text,category,suburb,priority,date_reported
+1,Large pothole outside 21 Colombo Street causing cars to swerve.,road,Sydenham,high,2026-05-01
+2,Glass and loose gravel left on cycle lane near Hagley Park.,road,Riccarton,medium,2026-05-01
+3,Traffic light at Moorhouse Avenue not changing for pedestrians.,road,Central City,high,2026-05-02
+4,Deep crack forming on footpath beside the primary school.,road,Hornby,medium,2026-05-02
+5,Street sign has fallen over after strong winds.,road,New Brighton,medium,2026-05-03
+6,Road marking at the roundabout has faded and is hard to see at night.,road,Papanui,low,2026-05-03
+7,Stormwater grate is loose and making loud noise when buses pass.,road,Linwood,medium,2026-05-04
+8,Broken curb stone on corner is blocking pram access.,road,Bishopdale,medium,2026-05-04
+9,Several potholes along school drop-off area need urgent repair.,road,Addington,high,2026-05-05
+10,Loose metal on road shoulder is creating dust and safety risk.,road,Halswell,medium,2026-05-05
+11,Missed rubbish collection for our street again this week.,waste,Belfast,medium,2026-05-06
+12,Recycling bins overflowing beside the community hall.,waste,Shirley,medium,2026-05-06
+13,Public litter bin in the park has not been emptied for days.,waste,Woolston,low,2026-05-07
+14,Illegal dumping of furniture behind the shops on Ferry Road.,waste,Linwood,high,2026-05-07
+15,Broken glass around the rubbish area near the playground.,waste,Avonhead,high,2026-05-08
+16,Green waste bags split open and rubbish has scattered on footpath.,waste,Cashmere,medium,2026-05-08
+17,Dog waste bin is full and smell is getting worse.,waste,St Albans,low,2026-05-09
+18,Household rubbish dumped beside reserve entrance overnight.,waste,Hei Hei,medium,2026-05-09
+19,Recycling crate was not collected even though it was placed out on time.,waste,Burnside,low,2026-05-10
+20,Overflowing bin near bus stop is attracting birds and mess.,waste,Spreydon,medium,2026-05-10
+21,Water leaking from pipe near footpath and flowing onto road.,water,Fendalton,high,2026-05-11
+22,Burst water main has reduced pressure in nearby homes.,water,Redwood,high,2026-05-11
+23,Stormwater drain blocked with leaves causing ponding after rain.,water,Merivale,medium,2026-05-12
+24,Continuous dripping from council tap in the reserve.,water,Aranui,low,2026-05-12
+25,Mud and water pooling across the shared path after every shower.,water,Wigram,medium,2026-05-13
+26,Sewer smell is strong near the creek walkway.,water,Richmond,high,2026-05-13
+27,Blocked culvert causing water to back up along the roadside.,water,Templeton,medium,2026-05-14
+28,Leak from irrigation line in park has created slippery surface.,water,Ilam,medium,2026-05-14
+29,Standing water near play area may be a health risk.,water,Wainoni,medium,2026-05-15
+30,Drain cover missing and water channel exposed beside kerb.,water,Beckenham,high,2026-05-15
+31,Streetlight outside bus stop is not working and area feels unsafe.,safety,Riccarton,high,2026-05-16
+32,Broken swing chain at playground could injure children.,safety,Papanui,high,2026-05-16
+33,Graffiti on community centre wall has offensive wording.,safety,Phillipstown,medium,2026-05-17
+34,Damaged fence at reserve allows easy access to construction site.,safety,Hoon Hay,high,2026-05-17
+35,Loose paving stones at entrance to library are a trip hazard.,safety,Central City,medium,2026-05-18
+36,Playground gate does not close properly and opens onto road.,safety,Casebrook,high,2026-05-18
+37,Large branch hanging over footpath looks like it may fall.,safety,Bromley,medium,2026-05-19
+38,Bus shelter glass panel cracked and dangerous.,safety,Sockburn,high,2026-05-19
+39,Poor lighting in alleyway behind shops is attracting unsafe behaviour.,safety,Sydenham,medium,2026-05-20
+40,Handrail on pedestrian bridge is loose.,safety,Burwood,high,2026-05-20
+41,Pothole developing near the intersection and drivers are swerving around it.,road,Addington,medium,2026-05-21
+42,Faded lane markings are difficult to follow in wet weather.,road,Sydenham,high,2026-05-22
+43,Footpath surface has lifted and is becoming uneven.,road,New Brighton,low,2026-05-23
+44,Damaged kerb ramp makes wheelchair access difficult.,road,Burnside,high,2026-05-24
+45,Loose grating beside the carriageway rattles under traffic.,road,Merivale,low,2026-05-25
+46,Pothole developing near the intersection and drivers are swerving around it.,road,Addington,high,2026-05-26
+47,Faded lane markings are difficult to follow in wet weather.,road,Sydenham,low,2026-05-27
+48,Footpath surface has lifted and is becoming uneven.,road,New Brighton,high,2026-05-28
+49,Damaged kerb ramp makes wheelchair access difficult.,road,Burnside,medium,2026-05-29
+50,Loose grating beside the carriageway rattles under traffic.,road,Merivale,high,2026-05-30
+51,Public bin is full and rubbish is spilling onto the ground.,waste,Addington,low,2026-05-21
+52,Dumped household items have been left beside the reserve fence.,waste,Sydenham,medium,2026-05-22
+53,Recycling was missed on collection day for several homes.,waste,New Brighton,low,2026-05-23
+54,Litter around the park picnic area needs urgent cleanup.,waste,Burnside,low,2026-05-24
+55,Waste bags have split and contents are spread across the path.,waste,Merivale,medium,2026-05-25
+56,Public bin is full and rubbish is spilling onto the ground.,waste,Addington,low,2026-05-26
+57,Dumped household items have been left beside the reserve fence.,waste,Sydenham,low,2026-05-27
+58,Recycling was missed on collection day for several homes.,waste,New Brighton,low,2026-05-28
+59,Litter around the park picnic area needs urgent cleanup.,waste,Burnside,medium,2026-05-29
+60,Waste bags have split and contents are spread across the path.,waste,Merivale,medium,2026-05-30
+61,Blocked drain is causing surface flooding after rain.,water,Addington,high,2026-05-21
+62,Water leak near the verge is running across the footpath.,water,Sydenham,medium,2026-05-22
+63,Strong wastewater smell near the channel suggests a pipe issue.,water,New Brighton,high,2026-05-23
+64,Standing water remains near the playground for days.,water,Burnside,medium,2026-05-24
+65,Missing drain cover creates risk beside flowing water.,water,Merivale,high,2026-05-25
+66,Blocked drain is causing surface flooding after rain.,water,Addington,high,2026-05-26
+67,Water leak near the verge is running across the footpath.,water,Sydenham,high,2026-05-27
+68,Strong wastewater smell near the channel suggests a pipe issue.,water,New Brighton,high,2026-05-28
+69,Standing water remains near the playground for days.,water,Burnside,high,2026-05-29
+70,Missing drain cover creates risk beside flowing water.,water,Merivale,high,2026-05-30
+71,Streetlight failure has left the walkway dark at night.,safety,Addington,high,2026-05-21
+72,Broken playground equipment could cause injury.,safety,Sydenham,high,2026-05-22
+73,Cracked glass at the shelter is hazardous to the public.,safety,New Brighton,high,2026-05-23
+74,Loose handrail on stairs needs urgent attention.,safety,Burnside,medium,2026-05-24
+75,Overhanging branch above the footpath looks unsafe.,safety,Merivale,medium,2026-05-25
+76,Streetlight failure has left the walkway dark at night.,safety,Addington,high,2026-05-26
+77,Broken playground equipment could cause injury.,safety,Sydenham,high,2026-05-27
+78,Cracked glass at the shelter is hazardous to the public.,safety,New Brighton,high,2026-05-28
+79,Loose handrail on stairs needs urgent attention.,safety,Burnside,high,2026-05-29
+80,Overhanging branch above the footpath looks unsafe.,safety,Merivale,medium,2026-05-30
