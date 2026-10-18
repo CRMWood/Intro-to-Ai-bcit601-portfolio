@@ -1,5 +1,5 @@
 import pandas as pd
-from config import CLEAN_DATA, MODEL_MODEL, MODEL_VECTORISER
+from config import PROCESSED_DIR, MODEL_DIR, TEST_DIR
 import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -9,10 +9,8 @@ from sklearn.pipeline import Pipeline #links steps together so that data flows t
 from sklearn.naive_bayes import MultinomialNB #chosen because it suits small text datasets well
 from sklearn.metrics import accuracy_score, classification_report
 
-vectoriser = TfidfVectorizer()
 
-
-df = pd.read_csv(CLEAN_DATA)
+df = pd.read_csv(PROCESSED_DIR / "BCIT601_starter_service_requests_dataset_clean.csv")
 
 # Features and label
 X = df[["request_text", "suburb", "priority"]]
@@ -24,10 +22,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-print("=== Train/test split (80/20) ===")
-print("Training rows:", len(X_train))
-print("Testing rows:", len(X_test))
-print()
 
 # Preprocessing: TF-IDF on the text, one-hot on suburb and priority
 preprocess = ColumnTransformer(
@@ -48,13 +42,36 @@ model = Pipeline(
 # Train
 model.fit(X_train, y_train)
 
-# Evaluate on the test 20%
 y_pred = model.predict(X_test)
-print("=== Evaluation ===")
-print("Accuracy:", round(accuracy_score(y_test, y_pred), 3))
-print(classification_report(y_test, y_pred, zero_division=0))
+# Evaluate on the test 20%
+with open(TEST_DIR / "model_creation_test_results.txt", "a") as f: #creates a file for the output
+    def log(*args):
+        print(*args) #sends any arguments to the terminal
+        print(*args, file=f) #saves the same arguements to a file
+
+    
+    log("=== Train/test split (80/20) ===")
+    log("Training rows:", len(X_train))
+    log("Testing rows:", len(X_test))
+    log()
+
+    log("=== Evaluation ===")
+    log("Accuracy:", round(accuracy_score(y_test, y_pred), 3))
+    log(classification_report(y_test, y_pred, zero_division=0),)
+    log("")
+    log("=== First 5 test rows ===")
+    test_results = pd.DataFrame({
+        "request_text": X_test["request_text"].values[:5],
+        "true_label": y_test.values[:5],
+        "predicted_label": y_pred[:5],
+    })
+    log(test_results.to_string(index=False))
 
 # Save the whole pipeline for the API
-joblib.dump(model, MODEL_MODEL)
-joblib.dump(vectoriser, MODEL_VECTORISER)
-print("Model saved to the 'Model' directory")
+joblib.dump(model, MODEL_DIR / "model-CRW0262_BCIT601_request_classifier.joblib")
+
+#Pulling the trained vectoriser from the pipeline and saving it for use
+trained_vectoriser = model.named_steps["preprocess"].named_transformers_["text"]
+joblib.dump(trained_vectoriser, MODEL_DIR / "vectoriser-CRW0262_BCIT601_request_classifier.joblib")
+print("Model and vectoriser saved to the 'Model' directory.")
+print("Inital test results saved to the 'Test' directory.")

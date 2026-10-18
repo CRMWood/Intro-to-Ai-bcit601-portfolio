@@ -4,23 +4,14 @@ from pathlib import Path
 PROJECT_ROOT = Path.cwd()
 
 # Folders
-RAW_FILE = PROJECT_ROOT / "Data" / "Raw"
-PROCESSED_FILE = PROJECT_ROOT / "Data" / "Processed"
-OUTPUTS_FILE = PROJECT_ROOT / "Outputs"
-MODEL_FILE = PROJECT_ROOT / "Model"
-
-# Files
-#Data files
-RAW_DATA = RAW_FILE / "BCIT601_starter_service_requests_dataset.csv"
-CLEAN_DATA = PROCESSED_FILE / "BCIT601_starter_service_requests_dataset_clean.csv"
-
-#Joblib files
-MODEL_MODEL = MODEL_FILE / "model - CRW0262_BCIT601_request_classifier- .joblib"
-MODEL_VECTORISER = MODEL_FILE / "vectoriser - CRW0262_BCIT601_request_classifier.joblib"
+RAW_DIR = PROJECT_ROOT / "Data" / "Raw"
+PROCESSED_DIR = PROJECT_ROOT / "Data" / "Processed"
+OUTPUTS_DIR = PROJECT_ROOT / "Outputs"
+MODEL_DIR = PROJECT_ROOT / "Model"
+TEST_DIR = PROJECT_ROOT / "Test"
 
 
-
-# Make sure output folders exist, as Github won't track empty folders
-for folder in (PROCESSED_FILE, OUTPUTS_FILE, MODEL_FILE):
+# Creates folder if the folder doesn't exist as Github doesn't track empty folders
+for folder in (PROCESSED_DIR, OUTPUTS_DIR, MODEL_DIR, TEST_DIR):
     folder.mkdir(parents=True, exist_ok=True)
 
