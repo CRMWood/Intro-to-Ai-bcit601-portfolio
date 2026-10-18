@@ -54,11 +54,10 @@ with open(TEST_DIR / "model_creation_test_results.txt", "a") as f: #creates a fi
     log("Training rows:", len(X_train))
     log("Testing rows:", len(X_test))
     log()
-
     log("=== Evaluation ===")
     log("Accuracy:", round(accuracy_score(y_test, y_pred), 3))
     log(classification_report(y_test, y_pred, zero_division=0),)
-    log("")
+    log()
     log("=== First 5 test rows ===")
     test_results = pd.DataFrame({
         "request_text": X_test["request_text"].values[:5],
