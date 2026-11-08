@@ -1,0 +1,270 @@
+--- health: normal request ---
+Request:  GET /health
+Body:     (no body)
+Status:   200
+Response: {"status":"ok","model_loaded":true,"model_version":"Council_Request-V1"}
+
+--- categories: normal request ---
+Request:  GET /categories
+Body:     (no body)
+Status:   200
+Response: {"categories":["road","safety","waste","water"]}
+
+--- predict: pothole ---
+Request:  POST /predict
+Body:     {"text":"There is a pothole in my street"}
+Status:   200
+Response: {"category":"road","confidence":0.449,"needs_review":true,"review_reason":"low_confidence"}
+
+--- predict: powerline ---
+Request:  POST /predict
+Body:     {"text":"A powerline has fallen"}
+Status:   200
+Response: {"category":"road","confidence":0.399,"needs_review":true,"review_reason":"low_confidence"}
+
+--- predict: expects water ---
+Request:  POST /predict
+Body:     {"text":"A watermain has burst"}
+Status:   200
+Response: {"category":"water","confidence":0.321,"needs_review":true,"review_reason":"low_confidence"}
+
+--- predict: expects road ---
+Request:  POST /predict
+Body:     {"text":"A traffic light on the corner of Morhouse Ave and Gasson st is flashing orange"}
+Status:   200
+Response: {"category":"road","confidence":0.431,"needs_review":true,"review_reason":"low_confidence"}
+
+--- predict: expects waste ---
+Request:  POST /predict
+Body:     {"text":"A bin near the childrens playground at Avonhead Park has overflowed"}
+Status:   200
+Response: {"category":"waste","confidence":0.381,"needs_review":true,"review_reason":"low_confidence"}
+
+--- predict: expects safety ---
+Request:  POST /predict
+Body:     {"text":"Handrail for the steps has broken"}
+Status:   200
+Response: {"category":"safety","confidence":0.369,"needs_review":true,"review_reason":"low_confidence"}
+
+--- predict: wrong method (GET) ---
+Request:  GET /predict
+Body:     (no body)
+Status:   405
+Response: {"detail":"Method Not Allowed"}
+
+--- unknown path ---
+Request:  GET /nothing
+Body:     (no body)
+Status:   404
+Response: {"detail":"Not Found"}
+
+--- predict invalid: field missing ---
+Request:  POST /predict
+Body:     {}
+Status:   422
+Response: {"detail":[{"type":"missing","loc":["body","text"],"msg":"Field required","input":{}}]}
+
+--- predict invalid: wrong field name ---
+Request:  POST /predict
+Body:     {"wrong_field":"drain cover missing"}
+Status:   422
+Response: {"detail":[{"type":"missing","loc":["body","text"],"msg":"Field required","input":{"wrong_field":"drain cover missing"}}]}
+
+--- predict invalid: empty string ---
+Request:  POST /predict
+Body:     {"text":""}
+Status:   422
+Response: {"detail":[{"type":"string_too_short","loc":["body","text"],"msg":"String should have at least 1 character","input":"","ctx":{"min_length":1}}]}
+
+--- predict invalid: spaces only ---
+Request:  POST /predict
+Body:     {"text":"   "}
+Status:   422
+Response: {"detail":"text must not be blank"}
+
+--- predict invalid: whitespace characters only ---
+Request:  POST /predict
+Body:     {"text":"\n\t \n"}
+Status:   422
+Response: {"detail":"text must not be blank"}
+
+--- predict invalid: null ---
+Request:  POST /predict
+Body:     {"text":null}
+Status:   422
+Response: {"detail":[{"type":"string_type","loc":["body","text"],"msg":"Input should be a valid string","input":null}]}
+
+--- predict invalid: number instead of text ---
+Request:  POST /predict
+Body:     {"text":123}
+Status:   422
+Response: {"detail":[{"type":"string_type","loc":["body","text"],"msg":"Input should be a valid string","input":123}]}
+
+--- predict invalid: list instead of text ---
+Request:  POST /predict
+Body:     {"text":["drain","cover","missing"]}
+Status:   422
+Response: {"detail":[{"type":"string_type","loc":["body","text"],"msg":"Input should be a valid string","input":["drain","cover","missing"]}]}
+
+--- predict invalid: object instead of text ---
+Request:  POST /predict
+Body:     {"text":{"message":"drain cover missing"}}
+Status:   422
+Response: {"detail":[{"type":"string_type","loc":["body","text"],"msg":"Input should be a valid string","input":{"message":"drain cover missing"}}]}
+
+--- predict invalid: broken JSON ---
+Request:  POST /predict
+Body:     {text: oops
+Status:   422
+Response: {"detail":[{"type":"json_invalid","loc":["body",1],"msg":"JSON decode error","input":{},"ctx":{"error":"Expecting property name enclosed in double quotes"}}]}
+
+--- predict invalid: plain text body ---
+Request:  POST /predict
+Body:     pothole on my street
+Status:   422
+Response: {"detail":[{"type":"model_attributes_type","loc":["body"],"msg":"Input should be a valid dictionary or object to extract fields from","input":"pothole on my street"}]}
+
+--- boundry: 1 character ---
+Request:  POST /predict
+Body:     {"text":"a"}
+Status:   200
+Response: {"category":"road","confidence":0.25,"needs_review":true,"review_reason":"no_known_words"}
+
+--- boundry: exactly 2000 characters ---
+Request:  POST /predict
+Body:     {"text":"a"}
+Status:   200
+Response: {"category":"road","confidence":0.25,"needs_review":true,"review_reason":"no_known_words"}
+
+--- boundry: 2001 characters ---
+Request:  POST /predict
+Body:     {"text":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...
+Status:   422
+Response: {"detail":[{"type":"string_too_long","loc":["body","text"],"msg":"String should have at most 2000 characters","input":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...
+
+--- unusual text: te reo Māori greeting with a macron ---
+Request:  POST /predict
+Body:     {"text":"Kia ora, There is a lot of rubish spilling out of the bins. Ngā mihi"}
+Status:   200
+Response: {"category":"waste","confidence":0.504,"needs_review":false,"review_reason":null}
+
+--- unusual text: emoji ---
+Request:  POST /predict
+Body:     {"text":"You still haven't replaced the drain cover 😡"}
+Status:   200
+Response: {"category":"water","confidence":0.61,"needs_review":false,"review_reason":null}
+
+--- unusual text: HTML tags ---
+Request:  POST /predict
+Body:     {"text":"<script>alert('hi')</script> Recycling bins"}
+Status:   200
+Response: {"category":"waste","confidence":0.492,"needs_review":true,"review_reason":"low_confidence"}
+
+--- unusual text: SQL-like text ---
+Request:  POST /predict
+Body:     {"text":"'; DROP TABLE tickets; --"}
+Status:   200
+Response: {"category":"road","confidence":0.358,"needs_review":true,"review_reason":"low_confidence"}
+
+--- unusual text: numbers only ---
+Request:  POST /predict
+Body:     {"text":"12345 67890"}
+Status:   200
+Response: {"category":"road","confidence":0.25,"needs_review":true,"review_reason":"no_known_words"}
+
+--- unusual text: punctuation only ---
+Request:  POST /predict
+Body:     {"text":"!!!???"}
+Status:   200
+Response: {"category":"road","confidence":0.25,"needs_review":true,"review_reason":"no_known_words"}
+
+--- unusual text: a different language ---
+Request:  POST /predict
+Body:     {"text":"Brak pokrywy studzienki stwarza zagrożenie w pobliżu płynącej wody."}
+Status:   200
+Response: {"category":"road","confidence":0.25,"needs_review":true,"review_reason":"no_known_words"}
+
+--- unusual text: capital letters ---
+Request:  POST /predict
+Body:     {"text":"MISSING DRAIN COVER!!!"}
+Status:   200
+Response: {"category":"water","confidence":0.67,"needs_review":false,"review_reason":null}
+
+--- unusual text: line breaks inside the text ---
+Request:  POST /predict
+Body:     {"text":"drain\ncover\r\nmissing"}
+Status:   200
+Response: {"category":"water","confidence":0.67,"needs_review":false,"review_reason":null}
+
+--- unusual text: spaces around the text ---
+Request:  POST /predict
+Body:     {"text":"  No drain cover  "}
+Status:   200
+Response: {"category":"water","confidence":0.614,"needs_review":false,"review_reason":null}
+
+--- unusual text: a null character ---
+Request:  POST /predict
+Body:     {"text":"a\u0000b drain cover"}
+Status:   200
+Response: {"category":"water","confidence":0.614,"needs_review":false,"review_reason":null}
+
+--- risk flag: no known words (zzzz qqqq xxxx) ---
+Request:  POST /predict
+Body:     {"text":"zzzz qqqq xxxx"}
+Status:   200
+Response: {"category":"road","confidence":0.25,"needs_review":true,"review_reason":"no_known_words"}
+
+--- risk flag: no known words (12345) ---
+Request:  POST /predict
+Body:     {"text":"12345"}
+Status:   200
+Response: {"category":"road","confidence":0.25,"needs_review":true,"review_reason":"no_known_words"}
+
+--- risk flag: no known words (!!!???) ---
+Request:  POST /predict
+Body:     {"text":"!!!???"}
+Status:   200
+Response: {"category":"road","confidence":0.25,"needs_review":true,"review_reason":"no_known_words"}
+
+--- risk flag: no known words (drin coer missng) ---
+Request:  POST /predict
+Body:     {"text":"drin coer missng"}
+Status:   200
+Response: {"category":"road","confidence":0.25,"needs_review":true,"review_reason":"no_known_words"}
+
+--- risk flag: vague text ---
+Request:  POST /predict
+Body:     {"text":"it is cracked and suggests issue"}
+Status:   200
+Response: {"category":"water","confidence":0.355,"needs_review":true,"review_reason":"low_confidence"}
+
+--- failure: health with no model ---
+Request:  POST /predict
+Body:     {"text":"drain cover"}
+Status:   503
+Response: {"detail":"Model is not loaded"}
+
+--- failure: health with no model ---
+Request:  GET /health
+Body:     (no body)
+Status:   503
+Response: {"detail":"Model is not loaded"}
+
+--- failure: internal error ---
+Request:  POST /predict
+Body:     {"text":"drain cover"}
+Status:   500
+Response: {"detail":"Prediction failed. Please try again later."}
+
+--- threshold: confidence 0.40 (below 0.50) ---
+Request:  POST /predict
+Body:     {"text":"missing drain cover"}
+Status:   200
+Response: {"category":"water","confidence":0.4,"needs_review":true,"review_reason":"low_confidence"}
+
+--- threshold: confidence 0.50 (on the threshold) ---
+Request:  POST /predict
+Body:     {"text":"missing drain cover"}
+Status:   200
+Response: {"category":"waste","confidence":0.5,"needs_review":false,"review_reason":null}
+

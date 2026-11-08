@@ -1,6 +1,6 @@
 
 import pandas as pd
-from config import PROCESSED_DIR, MODEL_DIR, TEST_DIR
+from config import PROCESSED_DIR, MODEL_DIR, OUTPUTS_DIR
 import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -30,7 +30,7 @@ predictions = model.predict(X_test)
 
 y_pred = model.predict(X_test)
 # Evaluate on the test 20%
-with open(TEST_DIR / "Logistic_Regression_Model" / "Logistic_regression_model_creation_test_results.txt", "a") as f: #creates a file for the output
+with open(OUTPUTS_DIR / "Logistic_Regression_Model" / "Logistic_regression_model_creation_test_results.txt", "a") as f: #creates a file for the output
     def log(*args):
         print(*args) #sends any arguments to the terminal
         print(*args, file=f) #saves the same arguements to a file
@@ -53,10 +53,11 @@ with open(TEST_DIR / "Logistic_Regression_Model" / "Logistic_regression_model_cr
     log(test_results.to_string(index=False))
 
 # Save the whole pipeline for the API
-joblib.dump(model, MODEL_DIR / "Logistic_Regression" / "request_text_model-CRW0262_BCIT601_request_classifier.joblib")
+trained_classifier = model.named_steps["clf"]
+joblib.dump(trained_classifier, MODEL_DIR / "Logistic_Regression" / "request_text_model-CRW0262_BCIT601_request_classifier.joblib")
 
 #Pulling the trained vectoriser from the pipeline and saving it for use
 trained_vectoriser = model.named_steps["tfidf"]
 joblib.dump(trained_vectoriser, MODEL_DIR / "Logistic_Regression" / "request_text_vectoriser-CRW0262_BCIT601_request_classifier.joblib")
 print("Model and vectoriser saved to the 'Model' directory.")
-print("Inital test results saved to the 'Test' directory.")
+print("Inital test results saved to the 'Outputs' directory.")

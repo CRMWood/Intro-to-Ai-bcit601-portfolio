@@ -1,4 +1,4 @@
-#http://127.0.0.1:8000/docs
+import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -6,67 +6,112 @@ import joblib
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-# Folder that contains this file, so the model files are found no matter where you start the server.
-MODEL_LOCATION = Path(__file__).resolve().parent.parent / "Model" / "Final_Model" 
+MODEL_DIR = Path(__file__).parent.parent / "Model" / "Final_Model"
+MODEL_VERSION = "Council_Request-V1"
+CONFIDENCE_THRESHOLD = 0.50   # below this, a staff member should check the result
+MAX_TEXT_LENGTH = 2000
 
-# A dictionary that holds the loaded model and vectoriser while the app is running
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+logger = logging.getLogger("council_api")
+
 artefacts = {}
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # STARTUP: runs once, before the first request
-    artefacts["model"] = joblib.load(MODEL_LOCATION / "request_text_model-CRW0262_BCIT601_request_classifier.joblib")
-    artefacts["vectoriser"] = joblib.load(MODEL_LOCATION / "request_text_vectoriser-CRW0262_BCIT601_request_classifier.joblib")
+    # STARTUP: if a file is missing, joblib.load raises an error and the server stops.
+    # That is deliberate: stopping with a clear message is safer than running with no model.
+    artefacts["model"] = joblib.load(MODEL_DIR / "request_text_model-CRW0262_BCIT601_request_classifier.joblib")
+    artefacts["vectoriser"] = joblib.load(MODEL_DIR / "request_text_vectoriser-CRW0262_BCIT601_request_classifier.joblib")
+
+    logger.info("Loaded %s with %d categories", MODEL_VERSION, len(artefacts["model"].classes_))
     yield
-    # SHUTDOWN: runs once when the server stops
+    # SHUTDOWN
     artefacts.clear()
 
 
-app = FastAPI(title="Council Request Ticket Classifier", lifespan=lifespan)
+app = FastAPI(title="City Council Request Classifier", lifespan=lifespan)
 
 
 class PredictRequest(BaseModel):
-    text: str = Field(min_length=1, max_length=2000)
+    text: str = Field(min_length=1, max_length=MAX_TEXT_LENGTH)
 
 
 class PredictResponse(BaseModel):
     category: str
     confidence: float
+    needs_review: bool
+    review_reason: str | None = None
+
+
+def model_is_loaded():
+    if "model" in artefacts and "vectoriser" in artefacts:
+        return True
+    return False
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    if not model_is_loaded():
+        raise HTTPException(status_code=503, detail="Model is not loaded")
+    return {"status": "ok", "model_loaded": True, "model_version": MODEL_VERSION}
 
 
 @app.get("/categories")
 def get_categories():
-    # classes_ is a NumPy array; .tolist() turns it into a normal Python list
+    if not model_is_loaded():
+        raise HTTPException(status_code=503, detail="Model is not loaded")
     return {"categories": artefacts["model"].classes_.tolist()}
 
 
 @app.post("/predict", response_model=PredictResponse)
 def predict(request: PredictRequest):
-    # Text made only of spaces passes min_length, so we check for it ourselves
-    if request.text.strip() == "":
+    # 1. The service cannot answer without its model
+    if not model_is_loaded():
+        raise HTTPException(status_code=503, detail="Model is not loaded")
+
+    # 2. Text made only of spaces passes min_length, so check it here
+    text = request.text.strip()
+    if text == "":
         raise HTTPException(status_code=422, detail="text must not be blank")
 
     model = artefacts["model"]
     vectoriser = artefacts["vectoriser"]
 
-    features = vectoriser.transform([request.text])       # 1. text -> numbers
-    probabilities = model.predict_proba([request.text])[0]      # 2. one probability per category
-    best_index = probabilities.argmax()                   # 3. position of the largest one
+    # 3. Predict. If anything goes wrong, log the details and return a safe message.
+    try:
+        features = vectoriser.transform([text])
+        probabilities = model.predict_proba(features)[0]
+    except Exception:
+        logger.exception("Prediction failed")   # the full error goes to the log only
+        raise HTTPException(status_code=500, detail="Prediction failed. Please try again later.")
+
+    best_index = probabilities.argmax()
+    category = str(model.classes_[best_index])
+    confidence = round(float(probabilities[best_index]), 3)
+
+    # 4. Decide whether a person should check this result
+    needs_review = False
+    review_reason = None
+    if features.nnz == 0:
+        # None of the words are in the vocabulary, so the model is only guessing
+        needs_review = True
+        review_reason = "no_known_words"
+    elif confidence < CONFIDENCE_THRESHOLD:
+        needs_review = True
+        review_reason = "low_confidence"
+
+    # 5. Log the outcome, but never the ticket text (it may contain personal information)
+    logger.info("predict length=%d category=%s confidence=%.3f needs_review=%s",
+                len(text), category, confidence, needs_review)
 
     return {
-        "category": str(model.classes_[best_index]),
-        "confidence": round(float(probabilities[best_index]), 3),
+        "category": category,
+        "confidence": confidence,
+        "needs_review": needs_review,
+        "review_reason": review_reason,
     }
 
-
-# This block lets you start the server with the Run button in VS Code, or with: python main.py
-# (You can also start it from a terminal with: fastapi dev main.py)
-if __name__ == "__main__":
+if __name__ == '__main__':
     import uvicorn
     uvicorn.run("main:app", reload=True)

@@ -1,0 +1,22 @@
+CHECK 1: perturbation (16 test texts)
+Change made to the text              Changed answers  Mean confidence
+No change (baseline)                         0 of 16            0.548
+UPPER CASE                                   0 of 16            0.548
+Extra punctuation                            0 of 16            0.548
+Greeting and Thank you                       0 of 16            0.548
+Typo                                         8 of 16            0.349
+Just the first three words of the request         4 of 16            0.485
+
+CHECK 2: confidence threshold (2 mistakes among 16 test texts)
+Threshold   Flagged  Mistakes caught  Correct flagged
+      0.3         0           0 of 2                0
+      0.4         4           1 of 2                3
+      0.5         5           2 of 2                3
+      0.6        10           2 of 2                8
+      0.7        14           2 of 2               12
+
+CHECK 3: accuracy by text length
+Slice                     Texts  Correct  Accuracy
+up to 8 words                 5        5      1.00
+9 to 10 words                 7        5      0.71
+11 or more words              4        4      1.00

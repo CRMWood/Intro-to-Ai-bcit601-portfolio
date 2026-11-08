@@ -38,7 +38,7 @@ ehthumbs.db
 # Python
 __pycache__/
 *.pyc
-venv/
+.venv/
 
 # OS files
 .DS_Store
